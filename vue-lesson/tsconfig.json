@@ -1,0 +1,72 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+    /**
+   * TypeScript编译器配置选项
+   * 该配置对象定义了TypeScript编译器的编译选项和行为设置
+   */
+  "compilerOptions": {
+      /**
+       * 指定输出文件的路径和名称
+       * 将所有编译后的代码合并输出到单个文件中
+       */
+      "outDir": "dist",
+      
+      /**
+       * 生成源映射文件(source map)
+       * 用于在浏览器调试时将编译后的代码映射回原始TypeScript代码
+       */
+      "sourceMap": true,
+      
+      /**
+       * 是否启用严格类型检查模式
+       * 设置为false表示不启用所有严格类型检查选项
+       */
+      "strict": false,
+      
+      /**
+       * 允许导入JSON模块
+       * 使TypeScript能够正确处理和解析JSON文件的导入
+       */
+      "resolveJsonModule": true,
+      
+      /**
+       * 指定模块解析策略
+       * 使用Node.js风格的模块解析算法
+       */
+      "moduleResolution": "node",
+      
+      /**
+       * 启用ES模块互操作性
+       * 允许使用import导入CommonJS模块，提供更好的模块兼容性
+       */
+      "esModuleInterop": true,
+      
+      /**
+       * 指定编译后的JavaScript目标版本
+       * 编译为ES2016标准的JavaScript代码
+       */
+      "target": "ES2016",
+      
+      /**
+       * 指定生成的模块系统类型
+       * 使用ESNext模块系统，支持最新的ES模块语法
+       */
+      "module": "esnext",
+      
+      /**
+       * JSX语法处理方式
+       * 保留JSX语法不进行转换，在后续构建步骤中处理
+       */
+      "jsx": "preserve",
+      
+      /**
+       * 指定编译过程中包含的库文件
+       * 包含ES2016核心库和DOM API类型定义
+       */
+      "lib": ["ESNext", "dom"],
+      "baseUrl": ".",
+      "paths": {
+        "@vue/*": ["packages/*/src"],
+      }
+  }
+}
