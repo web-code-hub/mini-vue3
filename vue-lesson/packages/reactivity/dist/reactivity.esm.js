@@ -137,6 +137,15 @@ var mutabaleHandlers = {
       trigger(target, key);
     }
     return result;
+  },
+  deleteProperty(target, key) {
+    const had = key in target;
+    delete target[key];
+    if (had) {
+      console.log("[delete trigger]", key);
+      trigger(target, key);
+    }
+    return true;
   }
 };
 
