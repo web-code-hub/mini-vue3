@@ -166,31 +166,57 @@ function createRef(value) {
   return new RefImpl(value);
 }
 var RefImpl = class {
+  // 依赖收集容器
+  /**
+  * 构造函数
+  * @param public rawValue - 原始值
+  */
   constructor(rawValue) {
     this.rawValue = rawValue;
     this._v_isRef = true;
     this._value = toReactive(rawValue);
   }
+  /**
+  * getter 访问器，用于获取 ref 的值
+  * @returns 当前值
+  */
   get value() {
     trackRef(this);
     return this._value;
   }
+  /**
+   * setter 访问器，用于设置 ref 的值
+   * @param newValue - 新值
+   */
   set value(newValue) {
     if (newValue !== this.rawValue) {
       this.rawValue = newValue;
       this._value = newValue;
-      triggerRef(this);
+      triggerValueRef(this);
     }
   }
 };
 var ObjectRefImpl = class {
+  /**
+  * 构造函数
+  * @param public object - 目标对象
+  * @param public key - 目标属性键
+  */
   constructor(object, key) {
     this.object = object;
     this.key = key;
   }
+  /**
+  * getter 访问器，获取目标对象指定属性的值
+  * @returns 目标属性的值
+  */
   get value() {
     return this.object[this.key];
   }
+  /**
+  * setter 方法，设置目标对象指定属性的值
+  * @param value - 新值
+  */
   set(value) {
     this.object[this.key] = value;
   }
@@ -198,7 +224,7 @@ var ObjectRefImpl = class {
 function trackRef(ref2) {
   activeEffect && trackEffects(activeEffect, ref2.dep = createDep(() => ref2.dep = void 0, "undefined"));
 }
-function triggerRef(ref2) {
+function triggerValueRef(ref2) {
   ref2.dep && triggerEffect(ref2.dep);
 }
 function toRef(object, key) {
@@ -211,11 +237,26 @@ function toRefs(object) {
   }
   return result;
 }
-function proxyRefs(objectWhthRefs) {
-  return new Proxy(objectWhthRefs, {
+function proxyRefs(objectWithRefs) {
+  return new Proxy(objectWithRefs, {
+    /**
+    * 拦截对象属性的读取操作
+    * @param target - 目标对象
+    * @param key - 属性键
+    * @param receiver - 代理对象
+    * @returns 属性值
+    */
     get(target, key, receiver) {
       return Reflect.get(target, key, receiver);
     },
+    /**
+     * 拦截对象属性的设置操作
+     * @param target - 目标对象
+     * @param key - 属性键
+     * @param value - 新值
+     * @param redeceiver - 代理对象
+     * @returns boolean 操作是否成功
+     */
     set(target, key, value, redeceiver) {
       const oldValue = target[key];
       if (oldValue._v_isRef) {
