@@ -6,7 +6,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node ./scripts/dev.ts reactivity -f cjs"
+    "dev": "node ./scripts/dev.ts reactivity -f esm"
   },
   "keywords": [],
   "author": "",

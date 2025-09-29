@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app"></div>
+    <script type="module">
+        import { reactive, effect } from './reactivity.esm.js'
+        const object = { name: 'zhangsan', age: 20, flag: true }
+        const status = reactive(object)
+        effect(() => {
+            // app.innerHTML = `name: ${status.name}, age: ${status.age}`
+            app.innerHTML = `${status.flag ? 'name' : 'age'}: ${status.flag ? status.name : status.age}`
+
+        })
+        // effect(() => {
+        //     // app.innerHTML = `name: ${status.name}, age: ${status.age}`
+        //     app.innerHTML = `${status.flag}+${status.flag}+${status.flag}`
+
+        // })
+        setTimeout(() => {
+            status.flag = !status.flag
+        }, 1000);
+    </script>
+</body>
+
+</html>
