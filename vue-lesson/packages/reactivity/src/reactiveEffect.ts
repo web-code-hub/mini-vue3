@@ -1,4 +1,3 @@
-import { create } from "domain";
 import { activeEffect, trackEffects, triggerEffect } from "./effect";
 const targetMap = new WeakMap() // 存储依赖
 

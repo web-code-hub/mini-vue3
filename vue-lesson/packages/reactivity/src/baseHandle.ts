@@ -1,23 +1,28 @@
+import { isObject } from "@vue/shared";
 import { track, trigger } from "./reactiveEffect";
-
+import { reactive } from "./reactive";
 export enum ReactiveFlags { // 响应式标识
     IS_REACTIVE = '__v_isReactive'
 }
-export const mutabaleHandlers: ProxyHandler<object> ={
-    get(target,key,receiver){
-        if(key === ReactiveFlags.IS_REACTIVE){ // 判断是否是响应式对象
-            return true
-        }
-        // 依赖收集
-        track(target,key)
-        return Reflect.get(target,key,receiver) // 通过Reflect获取值
+/**
+ * 创建代理对象
+ */
+export const mutabaleHandlers: ProxyHandler<object> = {
+    get(target, key, receiver) {
+        if (key === ReactiveFlags.IS_REACTIVE) true // 响应式标识
+        const result = Reflect.get(target, key, receiver) // 获取属性值
+
+
+        track(target, key) // 收集依赖
+        if (isObject(result)) reactive(result) // 如果属性值是对象就进行代理
+        return result // 通过Reflect获取值
     },
-    set(target,key,value,recetiver){ // 设置值
+    set(target, key, value, recetiver) { // 设置值
         // 触发更新
         const oldValue = target[key]
-        const result = Reflect.set(target,key,value,recetiver) // 通过Reflect设置值
-        if(oldValue !== value){
-            trigger(target,key) // 触发更新
+        const result = Reflect.set(target, key, value, recetiver) // 通过Reflect设置值
+        if (oldValue !== value) {
+            trigger(target, key) // 触发更新
         }
         return result
     }

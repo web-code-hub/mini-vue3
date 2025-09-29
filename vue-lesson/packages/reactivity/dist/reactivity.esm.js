@@ -15,6 +15,7 @@ var ReactiveEffect = class {
     // effect标识
     this._depsLength = 0;
     // 依赖长度
+    this._running = false;
     this.deps = [];
   }
   run() {
@@ -23,8 +24,11 @@ var ReactiveEffect = class {
     try {
       activeEffect = this;
       perCleanupEffect(this);
+      this._running = true;
       return this.fn();
     } finally {
+      postCleanupEffect(this);
+      this._running = false;
       activeEffect = lastActiveEffect;
     }
   }
@@ -32,6 +36,14 @@ var ReactiveEffect = class {
 function perCleanupEffect(effect2) {
   effect2._depsLength = 0;
   effect2._trackId++;
+}
+function postCleanupEffect(effect2) {
+  if (effect2.deps.length > effect2._depsLength) {
+    for (let i = effect2._depsLength; i < effect2.deps.length; i++) {
+      cleanEffect(effect2.deps[i], effect2);
+    }
+    effect2.deps.length = effect2._depsLength;
+  }
 }
 function cleanEffect(dep, effect2) {
   dep.delete(effect2);
@@ -43,6 +55,12 @@ function effect(fn, options) {
     _effect.run();
   });
   _effect.run();
+  if (options) {
+    Object.assign(_effect, options);
+  }
+  const runner = _effect.run.bind(_effect);
+  runner.effect = _effect;
+  return runner;
 }
 function trackEffects(effect2, dep) {
   if (dep.get(effect2) !== effect2._trackId) {
@@ -60,7 +78,11 @@ function trackEffects(effect2, dep) {
 }
 function triggerEffect(dep) {
   for (const effect2 of dep.keys()) {
-    effect2.scheduler && effect2.scheduler();
+    if (!effect2._running) {
+      if (effect2.scheduler) {
+        effect2.scheduler();
+      }
+    }
   }
 }
 
@@ -102,11 +124,11 @@ function trigger(target, key) {
 // packages/reactivity/src/baseHandle.ts
 var mutabaleHandlers = {
   get(target, key, receiver) {
-    if (key === "__v_isReactive" /* IS_REACTIVE */) {
-      return true;
-    }
+    if (key === "__v_isReactive" /* IS_REACTIVE */) true;
+    const result = Reflect.get(target, key, receiver);
     track(target, key);
-    return Reflect.get(target, key, receiver);
+    if (isObject(result)) reactive(result);
+    return result;
   },
   set(target, key, value, recetiver) {
     const oldValue = target[key];
