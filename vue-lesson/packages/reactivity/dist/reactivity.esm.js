@@ -154,10 +154,88 @@ function createReactive(target) {
   reactiveMap.set(target, proxy);
   return proxy;
 }
+function toReactive(value) {
+  return isObject(value) ? reactive(value) : value;
+}
+
+// packages/reactivity/src/ref.ts
+function ref(value) {
+  return createRef(value);
+}
+function createRef(value) {
+  return new RefImpl(value);
+}
+var RefImpl = class {
+  constructor(rawValue) {
+    this.rawValue = rawValue;
+    this._v_isRef = true;
+    this._value = toReactive(rawValue);
+  }
+  get value() {
+    trackRef(this);
+    return this._value;
+  }
+  set value(newValue) {
+    if (newValue !== this.rawValue) {
+      this.rawValue = newValue;
+      this._value = newValue;
+      triggerRef(this);
+    }
+  }
+};
+var ObjectRefImpl = class {
+  constructor(object, key) {
+    this.object = object;
+    this.key = key;
+  }
+  get value() {
+    return this.object[this.key];
+  }
+  set(value) {
+    this.object[this.key] = value;
+  }
+};
+function trackRef(ref2) {
+  activeEffect && trackEffects(activeEffect, ref2.dep = createDep(() => ref2.dep = void 0, "undefined"));
+}
+function triggerRef(ref2) {
+  ref2.dep && triggerEffect(ref2.dep);
+}
+function toRef(object, key) {
+  return new ObjectRefImpl(object, key);
+}
+function toRefs(object) {
+  const result = {};
+  for (const key in object) {
+    result[key] = toRef(object, key);
+  }
+  return result;
+}
+function proxyRefs(objectWhthRefs) {
+  return new Proxy(objectWhthRefs, {
+    get(target, key, receiver) {
+      return Reflect.get(target, key, receiver);
+    },
+    set(target, key, value, redeceiver) {
+      const oldValue = target[key];
+      if (oldValue._v_isRef) {
+        oldValue.value = value;
+        return true;
+      } else {
+        return Reflect.set(target, key, value, redeceiver);
+      }
+    }
+  });
+}
 export {
   activeEffect,
   effect,
+  proxyRefs,
   reactive,
+  ref,
+  toReactive,
+  toRef,
+  toRefs,
   trackEffects,
   triggerEffect
 };

@@ -17,3 +17,6 @@ function createReactive(target) { // 创建响应式函数
     reactiveMap.set(target, proxy) // 缓存代理
     return proxy // 返回代理
 }
+export function toReactive(value) {
+    return isObject(value) ? reactive(value) : value
+}
