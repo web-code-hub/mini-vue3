@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ day1-track-trigger, main ]
+    branches: [ day1-track-trigger]
   pull_request:
     branches: [ main ]
 
@@ -10,6 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: 查看仓库
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
         with:
@@ -18,5 +19,6 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+      - name : 安装依赖
       - run: pnpm install
       - run: pnpm test
