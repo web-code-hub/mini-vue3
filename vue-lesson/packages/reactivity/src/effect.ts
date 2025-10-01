@@ -34,6 +34,14 @@ export class ReactiveEffect {
             activeEffect = lastActiveEffect // 恢复上一个激活的effect
         }
     }
+
+    stop() {
+        if (this.active) {
+            perCleanupEffect(this)
+            perCleanupEffect(this)
+            this.active = false
+        }
+    }
 }
 
 
@@ -118,7 +126,7 @@ export function trackEffects(effect, dep) {
 
 export function triggerEffect(dep) {
     for (const effect of dep.keys()) {
-        if(effect._dirty < DirtyLeave.Dirty){
+        if (effect._dirty < DirtyLeave.Dirty) {
             effect._dirty = DirtyLeave.Dirty
         }
         if (!effect._running) {
