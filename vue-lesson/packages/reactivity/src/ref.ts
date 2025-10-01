@@ -82,7 +82,8 @@ class ObjectRefImpl {
 /**
  * 为 ref 收集依赖
  * @param ref - RefImpl 实例
- */function trackRef(ref) {
+ */
+export function trackRef(ref) {
     // 只有在存在激活的 effect 时才进行依赖收集
     activeEffect && trackEffects(activeEffect, ref.dep = createDep(() => (ref.dep = undefined), 'undefined'))
 
@@ -91,7 +92,7 @@ class ObjectRefImpl {
  * 触发 ref 的依赖更新
  * @param ref - RefImpl 实例
  */
-function triggerValueRef(ref) {
+export function triggerValueRef(ref) {
     // 只有当存在依赖时才触发更新
     ref.dep && triggerEffect(ref.dep)
 }

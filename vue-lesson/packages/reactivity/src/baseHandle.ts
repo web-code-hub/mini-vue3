@@ -2,9 +2,7 @@ import {isObject} from "@vue/shared";
 import {track, trigger} from "./reactiveEffect";
 import {reactive} from "./reactive";
 
-export enum ReactiveFlags { // 响应式标识
-    IS_REACTIVE = '__v_isReactive'
-}
+
 
 /**
  * 创建代理对象

@@ -1,5 +1,6 @@
 import { isObject } from "@vue/shared";
-import { mutabaleHandlers, ReactiveFlags } from "./baseHandle";
+import { mutabaleHandlers } from "./baseHandle";
+import {ReactiveFlags} from './constants'
 const reactiveMap = new WeakMap(); // key:target value:proxy
 
 

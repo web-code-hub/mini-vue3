@@ -2,10 +2,12 @@
 function isObject(value) {
   return typeof value === "object" && value !== null;
 }
+function isFunction(value) {
+  return typeof value === "function";
+}
 
 // packages/reactivity/src/effect.ts
 var ReactiveEffect = class {
-  // 依赖集合
   constructor(fn, scheduler) {
     this.fn = fn;
     this.scheduler = scheduler;
@@ -17,8 +19,17 @@ var ReactiveEffect = class {
     // 依赖长度
     this._running = false;
     this.deps = [];
+    // 依赖集合
+    this._dirty = 4 /* Dirty */;
+  }
+  get _dirtyLeave() {
+    return this._dirty === 4 /* Dirty */;
+  }
+  set _dirtyLeave(value) {
+    this._dirty = value ? 4 /* Dirty */ : 0 /* NoDirty */;
   }
   run() {
+    this._dirty = 0 /* NoDirty */;
     if (!this.active) this.fn();
     let lastActiveEffect = activeEffect;
     try {
@@ -78,6 +89,9 @@ function trackEffects(effect2, dep) {
 }
 function triggerEffect(dep) {
   for (const effect2 of dep.keys()) {
+    if (effect2._dirty < 4 /* Dirty */) {
+      effect2._dirty = 4 /* Dirty */;
+    }
     if (!effect2._running) {
       if (effect2.scheduler) {
         effect2.scheduler();
@@ -124,7 +138,7 @@ function trigger(target, key) {
 // packages/reactivity/src/baseHandle.ts
 var mutabaleHandlers = {
   get(target, key, receiver) {
-    if (key === "__v_isReactive" /* IS_REACTIVE */) true;
+    if (key === ReactiveFlags.IS_REACTIVE) true;
     const result = Reflect.get(target, key, receiver);
     track(target, key);
     if (isObject(result)) reactive(result);
@@ -277,8 +291,61 @@ function proxyRefs(objectWithRefs) {
     }
   });
 }
+
+// packages/reactivity/src/computed.ts
+var ComputedRefImpl = class {
+  // 依赖集合，用于存储订阅该计算属性的副作用
+  /**
+   * 构造函数初始化计算属性
+   * @param getter - 计算属性的 getter 函数
+   * @param setter - 计算属性的 setter 函数
+   */
+  constructor(getter, setter) {
+    this.getter = getter;
+    this.setter = setter;
+    this.effect = new ReactiveEffect(() => getter(this._value), () => {
+      triggerValueRef(this);
+    });
+  }
+  /**
+   * 获取计算属性的值
+   * 如果数据是脏的（_dirty 为 true），则重新计算并跟踪依赖
+   * 否则直接返回缓存的值
+   */
+  get value() {
+    if (this.effect._dirty) {
+      this._value = this.effect.run();
+      trackRef(this);
+    } else {
+      return this._value;
+    }
+  }
+  /**
+   * 设置计算属性的值
+   * 调用 setter 函数处理赋值操作
+   * @param v - 要设置的新值
+   */
+  set value(v) {
+    this.setter(v);
+  }
+};
+function computed(getterOrOptions) {
+  const onlyGetter = isFunction(getterOrOptions);
+  let getter, setter;
+  if (onlyGetter) {
+    getter = getterOrOptions;
+    setter = () => {
+    };
+  } else {
+    getter = getterOrOptions.get;
+    setter = getterOrOptions.set;
+  }
+  return new ComputedRefImpl(getter, setter);
+}
 export {
+  ReactiveEffect,
   activeEffect,
+  computed,
   effect,
   proxyRefs,
   reactive,
@@ -287,6 +354,8 @@ export {
   toRef,
   toRefs,
   trackEffects,
-  triggerEffect
+  trackRef,
+  triggerEffect,
+  triggerValueRef
 };
 //# sourceMappingURL=reactivity.esm.js.map
