@@ -145,7 +145,7 @@ function trigger(target, key) {
 // packages/reactivity/src/baseHandle.ts
 var mutabaleHandlers = {
   get(target, key, receiver) {
-    if (key === ReactiveFlags.IS_REACTIVE) true;
+    if (key === "__v_isReactive" /* IS_REACTIVE */) true;
     const result = Reflect.get(target, key, receiver);
     track(target, key);
     if (isObject(result)) reactive(result);

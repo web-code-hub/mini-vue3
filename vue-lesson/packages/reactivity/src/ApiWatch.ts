@@ -1,6 +1,5 @@
-import {isFunction, isObject} from "@vue/shared";
+import {isFunction, isObject,isRef} from "@vue/shared";
 import {ReactiveEffect} from "./effect";
-
 /**
  * 监听响应式数据的变化
  * @param source 要监听的数据源，可以是一个 getter 函数或响应式对象
@@ -32,7 +31,7 @@ export function watchEffect(getter: () => any, options: { deep?: boolean } = {})
  * @param options 配置参数，包括 immediate 和 deep 属性
  * @returns 返回一个用于停止监听的函数
  */
-function doWatch(source: any, cb: ((newValue: any, oldValue: any) => void) | null, {immediate, deep}: {
+function doWatch(source: any, cb: ((newValue: any, oldValue: any,onCleanUp:(fn:()=>void)=>void) => void) | null, {immediate, deep}: {
     immediate?: boolean,
     deep?: boolean
 }) {
