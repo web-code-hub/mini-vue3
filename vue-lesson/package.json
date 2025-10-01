@@ -6,7 +6,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "node ./scripts/dev.ts reactivity -f esm",
+    "dev": "node ./scripts/dev.ts runtime-core -f esm",
     "test": "vitest"
   },
   "keywords": [],

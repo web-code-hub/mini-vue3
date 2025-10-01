@@ -1,0 +1,21 @@
+{
+    "name": "@vue/runtime-dom",
+    "version": "1.0.0",
+    "main": "index.js",
+    "type": "module",
+    "module": "../src/runtime-dom.esm.js",
+    "ukgroup": "../src/runtime-dom.global.js",
+    "buildOptions": {
+        "name": "RuntimeDom",
+        "formats": [
+            "esm-bundler",
+            "cjs",
+            "global",
+            "esm-browser",
+            "umd"
+        ]
+    },
+    "dependencies": {
+        "@vue/runtime-core": "workspace:*"
+    }
+}
