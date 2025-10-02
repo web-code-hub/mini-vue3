@@ -7,7 +7,7 @@ import {trackRef, triggerValueRef} from "./ref";
  * 它通过 ReactiveEffect 来追踪依赖并缓存计算结果
  */
 class ComputedRefImpl {
-    public _value:()=>void|undefined;         // 缓存计算结果的值
+    public _value:number;         // 缓存计算结果的值
     public effect: ReactiveEffect;         // 响应式副作用，用于执行 getter 并收集依赖
     public dep;            // 依赖集合，用于存储订阅该计算属性的副作用
 

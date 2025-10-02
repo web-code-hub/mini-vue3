@@ -5,12 +5,12 @@
     <title>Title</title>
 </head>
 <body>
+<div id="app"></div>
 <script type="module">
-    // import { createRenderer,h,renader } from '/node_modules/@vue/runtime-dom/dist/runtime-dom.esm-browser.js'
-
-    import { renderOptions } from './runtime-dom.esm.js'
-    console.log(renderOptions);
-    
+    import {h, render} from "./runtime-dom.esm.js";
+    // const ele = h('div',{style:{color:'red'}},'abc','cba','aaa')
+    // console.log(ele)
+    render(h('h1','hello'), app)
 </script>
-</body> 
+</body>
 </html>

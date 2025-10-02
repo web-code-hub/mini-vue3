@@ -5,7 +5,7 @@ export const nodeOptions = {
      * @param parent 父节点
      * @param anchor 插入位置的参考元素
      */
-    insert: (el, parent, anchor) => parent.insertBefore(el, anchor),
+    insert: (el, parent, anchor) => parent.insertBefore(el, anchor|| null),
 
     /**
      * 创建指定标签名的元素

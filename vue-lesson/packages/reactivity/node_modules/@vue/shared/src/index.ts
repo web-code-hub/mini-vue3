@@ -7,4 +7,7 @@ export function isFunction(value){
 export function isRef(value){
     return value && value._v_isRef
 }
+export function isString(value){
+    return typeof value === 'string'
+}
 export * from './shapeFlag'

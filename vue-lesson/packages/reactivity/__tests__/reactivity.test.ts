@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import {effect,reactive} from '../reactivity/dist/reactivity.esm.js'
+import {effect,reactive} from '../dist/reactivity.esm.js'
 
 describe('Day1 30 cases', () => {
     /* ====== 1-4 基础 ====== */

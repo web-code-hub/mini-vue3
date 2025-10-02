@@ -3,8 +3,8 @@
     "version": "1.0.0",
     "main": "index.js",
     "type": "module",
-    "module": "../src/index.esm.js",
-    "ukgroup": "../src/index.global.js",
+    "module": "../src/reactivity.esm.js",
+    "ukgroup": "../src/reactivity.global.js",
     "buildOptions": {
         "name": "VueReactivity",
         "formats": [

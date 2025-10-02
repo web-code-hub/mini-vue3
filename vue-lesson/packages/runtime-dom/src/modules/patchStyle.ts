@@ -5,10 +5,10 @@
  * @param prev - 旧的样式值
  * @param value - 新的样式值
  */
-export default function patchStyle(el, key, prev, value) {
-    const style = el.style
+export default function patchStyle(el, prev, value) {
+    let style = el.style     
     // 应用新的样式值
-    for (const key in value) {
+    for (const key in value) {              
         style[key] = value[key]
     }
     // 如果存在旧样式，则遍历并更新
